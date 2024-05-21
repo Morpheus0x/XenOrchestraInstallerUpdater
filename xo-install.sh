@@ -50,6 +50,7 @@ INSTALL_REPOS="${INSTALL_REPOS:-"true"}"
 SYSLOG_TARGET="${SYSLOG_TARGET:-""}"
 YARN_CACHE_CLEANUP="${YARN_CACHE_CLEANUP:-"false"}"
 YARN_NETWORK_TIMEOUT="${YARN_NETWORK_TIMEOUT:-"300000"}"
+XOA_PLAN="${XOA_PLAN:-"5"}"
 
 # set variables not changeable in configfile
 TIME=$(date +%Y%m%d%H%M)
@@ -600,6 +601,27 @@ function PrepInstall {
 
         runcmd "cd $INSTALLDIR/xo-builds/xen-orchestra-$TIME && git checkout $BRANCH"
         runcmd "cd $SCRIPT_DIR"
+    fi
+
+    # set XOA_BUILD node env var to build other target than SOURCES
+    if [[ "$XOA_PLAN" != "5" ]]; then
+        local XOA_PLAN_NAME="SOURCES"
+        case "$XOA_PLAN" in
+            "1")
+                XOA_PLAN_NAME="FREE" ;;
+            "2")
+                XOA_PLAN_NAME="STARTER" ;;
+            "3")
+                XOA_PLAN_NAME="ENTERPRISE" ;;
+            "4")
+                XOA_PLAN_NAME="PREMIUM" ;;
+            "5")
+                XOA_PLAN_NAME="SOURCES" ;;
+            *)
+                XOA_PLAN_NAME="UNKNOWN" ;;
+        esac
+        printinfo "Creating .env file to specify build target '$XOA_PLAN' ($XOA_PLAN_NAME)"
+        echo -e "XOA_PLAN=${XOA_PLAN}\n" > $INSTALLDIR/xo-builds/xen-orchestra-$TIME/.env
     fi
 
     # Check if the new repo is any different from the currently-installed
