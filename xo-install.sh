@@ -620,8 +620,11 @@ function PrepInstall {
             *)
                 XOA_PLAN_NAME="UNKNOWN" ;;
         esac
-        printinfo "Creating .env file to specify build target '$XOA_PLAN' ($XOA_PLAN_NAME)"
-        echo -e "XOA_PLAN=${XOA_PLAN}\n" > $INSTALLDIR/xo-builds/xen-orchestra-$TIME/.env
+
+        echo
+        printinfo "Creating .env file to specify build target plan '$XOA_PLAN' ($XOA_PLAN_NAME)"
+
+        echo -e "XOA_PLAN=${XOA_PLAN}\n" > $INSTALLDIR/xo-builds/xen-orchestra-$TIME/packages/xo-web/.env
     fi
 
     # Check if the new repo is any different from the currently-installed
