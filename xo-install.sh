@@ -605,7 +605,7 @@ function PrepInstall {
 
     # set XOA_BUILD node env var to build other target than SOURCES
     if [[ "$XOA_PLAN" != "5" ]]; then
-        local XOA_PLAN_NAME="SOURCES"
+        local XOA_PLAN_NAME=""
         case "$XOA_PLAN" in
             "1")
                 XOA_PLAN_NAME="FREE" ;;
@@ -622,9 +622,12 @@ function PrepInstall {
         esac
 
         echo
-        printinfo "Creating .env file to specify build target plan '$XOA_PLAN' ($XOA_PLAN_NAME)"
+        printinfo "Changing Xen Orchestra plan to '$XOA_PLAN' ($XOA_PLAN_NAME)"
 
-        echo -e "XOA_PLAN=${XOA_PLAN}\n" > $INSTALLDIR/xo-builds/xen-orchestra-$TIME/packages/xo-web/.env
+        local XO_WEB_PACKAGE="$INSTALLDIR/xo-builds/xen-orchestra-$TIME/packages/xo-web/package.json"
+        sed -i 's/XOA_PLAN=[^ ]* //g' "$XO_WEB_PACKAGE"
+        sed -i "s/\"build\": \"/\"build\": \"XOA_PLAN=$XOA_PLAN /g" "$XO_WEB_PACKAGE"
+        sed -i "s/\"dev\": \"/\"dev\": \"XOA_PLAN=$XOA_PLAN /g" "$XO_WEB_PACKAGE"
     fi
 
     # Check if the new repo is any different from the currently-installed
